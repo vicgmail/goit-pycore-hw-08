@@ -113,10 +113,17 @@ class AddressBook(UserDict):
             if not user.birthday or not user.birthday.value:
                 continue
             birthday = user.birthday.value
-            upcoming_birthday = birthday.replace(year=current_year)
+            upcoming_birthday = None
+            try:
+                upcoming_birthday = birthday.replace(year=current_year)
+            except ValueError:
+                upcoming_birthday = birthday.replace(year=current_year, day=28)
             upcoming_birthday_days = (upcoming_birthday - today).days
             if upcoming_birthday_days < 0:
-                upcoming_birthday = birthday.replace(year=current_year + 1)
+                try:
+                    upcoming_birthday = birthday.replace(year=current_year + 1)
+                except ValueError:
+                    upcoming_birthday = birthday.replace(year=current_year + 1, day=28)
                 upcoming_birthday_days = (upcoming_birthday - today).days
             if 0 <= upcoming_birthday_days < DEFAULT_GREETING_PERIOD_DAYS:
                 if upcoming_birthday.weekday() == 5: # Saturday
